@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import pandas as pd
 import numpy as np
 import json
-from poly_reg_ridge_model import *
+import multiple_linear_regression as mlr
 
 
 colors = {
@@ -133,7 +133,7 @@ task_1_layout = html.Div(
                                 value=50,
                             ),
                             
-                            dbc.Button("Generate new predictions", color="info", className="me-1", id = "generate-pred-button", n_clicks = 0),
+                            # dbc.Button("Generate new predictions", color="info", className="me-1", id = "generate-pred-button", n_clicks = 0),
                             html.Div(id='prediction-output-container')
                             
                         ]

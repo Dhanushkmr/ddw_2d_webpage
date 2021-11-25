@@ -110,12 +110,22 @@ def slider_manager(new_cases, hdi, hospital, stringency):
         Input("new-cases-slider", 'value'),
         Input("hdi-slider", 'value'),
         Input("hosp-beds-slider", 'value'),
-        Input("stringency-slider", 'value')
+        Input("stringency-slider", 'value'),
+        Input("continent-dropdown", 'value')
     ]
 )
-def slider_manager(new_cases, hdi, hospital, stringency):
-    return '0'
-
+def slider_manager(new_cases, hdi, hospital, stringency, continent):
+    curr_df = df_conti[df_conti.continent_rearranged == continent]
+    feature_column = ["new_cases","human_development_index","hospital_beds_per_thousand","stringency_index"]
+    target_column = ['new_deaths']
+    beta, mu, sig = mlr.train_model(curr_df,feature_column,target_column,degree=1,test_size=0.3,alpha = 0.01,iterations = 1500)
+    new_data = np.log(np.array([new_cases, hdi, hospital, stringency]))
+    new_data = (new_data-mu)/sig
+    new_data = np.concatenate((np.ones(1), new_data)).reshape((1,5))
+    print(new_data)
+    print(beta)
+    prediction = max(0, int(mlr.predict_norm(new_data, beta)))
+    return f"Predicted number of deaths: {prediction}"
 
 
 
