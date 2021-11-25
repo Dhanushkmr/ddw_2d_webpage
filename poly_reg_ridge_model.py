@@ -34,7 +34,7 @@ def predict_norm(X, beta):
     return res
 
 def add_days(pred,days):
-    dataset = pd.DataFrame({'new_deaths': pred[:, 0]})
+    dataset = pd.DataFrame({'icu_patients': pred[:, 0]})
     dataset['days'] = 0
     dataset['new'] = 'Predicted'
     for i in range(101,101+days):
@@ -104,7 +104,6 @@ def n_new_predictions(n, tail, degree, mu, sigma,columns):
     return df_feature_extended
 
 def train_model(df_country, feature_colummns, to_transform_features, pred_column, degree = 1, iterations = 2000, alpha = 0.005):
-    #hi Dhanush, I wrote another metric RSS for us to use, i can't test it yet cos you're editing, later i'll come back. gg for dinner now
     """
     Trains the model
 

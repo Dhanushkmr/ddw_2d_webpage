@@ -5,27 +5,6 @@ from werkzeug.serving import run_simple
 from task_1 import *
 from task_2 import *
 
-colors = {
-    'background': '#FFFFFF',
-    'text': '#7FDBFF'
-}
-
-df = pd.read_csv("latest_processed_data_with_weeks.csv")
-df_ploting = df.groupby('iso_code')['total_deaths'].max().reset_index()
-world_map = go.Figure(
-    data=go.Choropleth(
-        locations = df_ploting['iso_code'],
-        z = df_ploting['total_deaths'],
-        colorscale = 'Reds',
-        hoverinfo = "location+z",
-        autocolorscale=False,
-        marker_line_color='darkgray',
-        marker_line_width=0.5,
-        colorbar_title = 'Total Number of Deaths'
-    )
-)
-world_map.update_layout(height=700, margin={"r":0,"t":0,"l":0,"b":0})
-
 
 server = flask.Flask(__name__)
 
@@ -39,7 +18,7 @@ dash_app2.layout = task_2_layout
 
 
 @dash_app2.callback(
-    Output("new_deaths_scatter", "figure"),
+    Output("icu_scatter", "figure"),
     [
         Input("plotly-map", 'clickData'),
         Input("generate-pred-button", 'n_clicks'),
@@ -61,18 +40,19 @@ def generate_new_pred(clickData, n_clicks, days):
     }, indent=2)
     print(ctx_msg)
 
-    country_code = 'SGP'
+    country_code = 'USA'
     if clickData:
         country_code = clickData['points'][0]['location']
-    new_deaths_scatter_fig = px.scatter(
-        df[df.iso_code == country_code], x = df[df.iso_code == country_code].index, y = "new_deaths"
+    icu_scatter_fig = px.scatter(
+        df_2[df_2.iso_code == country_code], x = df_2[df_2.iso_code == country_code].index, y = "icu_patients"
     )
+    icu_scatter_fig.update_layout(title = country_code, yaxis_title = "ICU patients", xaxis_title ="days")
 
     if button_id == "generate-pred-button":
-        feature_columns = ["days", "stringency_index","percentage_vaccinated","positive_rate"]
-        to_transform_features = ["days", "stringency_index","percentage_vaccinated","positive_rate"]
-        pred_column = ["new_deaths"]
-        df_country = df[df.iso_code == country_code]
+        feature_columns = ["days", "new_cases","percentage_population","hosp_patients"]
+        to_transform_features = ["days", "new_cases","percentage_population","hosp_patients"]
+        pred_column = ["icu_patients"]
+        df_country = df_2[df_2.iso_code == country_code]
         degree = 3 
         if n_clicks:
             tail, mu, sigma, beta_final = train_model(df_country,feature_columns, to_transform_features, pred_column, degree)
@@ -80,13 +60,63 @@ def generate_new_pred(clickData, n_clicks, days):
             pred_new_n = predict_norm(prepare_feature(new_get_pred), beta_final)
             data_new_pred = add_days(pred_new_n,int(days))
             df_country['new'] = 'Observed'
-            o_fig = px.scatter(df_country, y ='new_deaths', x='days', color = 'new', color_discrete_map={'Observed':'blue'})
-            n_fig = px.scatter(data_new_pred, y = 'new_deaths', x='days', color = 'new', color_discrete_map={'Predicted':'red'})
-            combined_fig = go.Figure(data=o_fig.data + n_fig.data)
-            combined_fig.update_layout(yaxis_title = "new_deaths",xaxis_title ="days")
+            o_fig = px.scatter(df_country, y ='icu_patients', x='days', color = 'new', color_discrete_map={'Observed':'blue'})
+            n_fig = px.scatter(data_new_pred, y = 'icu_patients', x='days', color = 'new', color_discrete_map={'Predicted':'red'})
+            combined_fig = go.Figure(data=o_fig.data + n_fig.data,)
+            combined_fig.update_layout(title = country_code, yaxis_title = "ICU patients",xaxis_title ="days")
             return combined_fig
         return None
-    return new_deaths_scatter_fig
+    return icu_scatter_fig
+
+
+@dash_app1.callback(
+    Output("deaths_scatter", "figure"),
+    [
+        Input("features-dropdown", 'value'),
+        Input("continent-dropdown", 'value')
+    ]
+)
+def continent_deaths_viewer(features, continent):
+    fig = px.scatter(df_conti[df_conti.continent_rearranged == continent], x = features, y = 'new_deaths')
+    fig.update_layout(title = continent, yaxis_title = "New Deaths", xaxis_title = features)
+    return fig
+
+
+@dash_app1.callback(
+    [
+        Output("new-cases-slider-output-container", "children"),
+        Output("hdi-slider-output-container", "children"),
+        Output("hosp-beds-slider-output-container", "children"),
+        Output("stringency-slider-output-container", "children"),
+    ],
+    [
+        Input("new-cases-slider", 'value'),
+        Input("hdi-slider", 'value'),
+        Input("hosp-beds-slider", 'value'),
+        Input("stringency-slider", 'value')
+    ]
+)
+def slider_manager(new_cases, hdi, hospital, stringency):
+    new_case_str = f"Number of new cases:{new_cases}"
+    hdi_str = f"Human Development Index:{hdi}"
+    hospital_str = f"Number of Hospital Beds (per thousand):{hospital}" 
+    stringency_str = f"Stringency Index:{stringency}"
+    return new_case_str, hdi_str, hospital_str, stringency_str
+
+
+@dash_app1.callback(
+    Output("prediction-output-container", "children"),
+    [
+        Input("new-cases-slider", 'value'),
+        Input("hdi-slider", 'value'),
+        Input("hosp-beds-slider", 'value'),
+        Input("stringency-slider", 'value')
+    ]
+)
+def slider_manager(new_cases, hdi, hospital, stringency):
+    return '0'
+
+
 
 
 @server.route('/')

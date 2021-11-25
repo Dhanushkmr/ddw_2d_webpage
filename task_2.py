@@ -14,18 +14,18 @@ colors = {
     'text': '#7FDBFF'
 }
 
-df = pd.read_csv("latest_processed_data_with_weeks.csv")
-df_ploting = df.groupby('iso_code')['total_deaths'].max().reset_index()
+df_2 = pd.read_csv("datasets/task2_data_cleaned.csv")
+df_ploting = df_2.groupby('iso_code', as_index=False)['iso_code', 'icu_patients'].tail(1).reset_index()
 world_map = go.Figure(
     data=go.Choropleth(
         locations = df_ploting['iso_code'],
-        z = df_ploting['total_deaths'],
+        z = df_ploting['icu_patients'],
         colorscale = 'Reds',
-        hoverinfo = "location+z",
+        hovertemplate = "%{location} - %{z}",
         autocolorscale=False,
         marker_line_color='darkgray',
         marker_line_width=0.5,
-        colorbar_title = 'Total Number of Deaths'
+        colorbar_title = 'Total Number of Weekly ICU Admissions'
     )
 )
 world_map.update_layout(height=700, margin={"r":0,"t":0,"l":0,"b":0})
@@ -45,7 +45,7 @@ task_2_layout = html.Div(
             dbc.Col(
                 dbc.Card(
                     [
-                        dbc.CardHeader("Covid-19 Total Deaths by country"),
+                        dbc.CardHeader("Covid-19 Weekly ICU Admissions by country"),
                         dcc.Graph(id="plotly-map", figure=world_map),
                     ]
                 ), width = 10, align='center'
@@ -56,8 +56,8 @@ task_2_layout = html.Div(
                 dbc.Col(
                     dbc.Card(
                         [
-                            dbc.CardHeader(id = "new-deaths-for-country"),
-                            dcc.Graph(id="new_deaths_scatter"),
+                            dbc.CardHeader(id = "icu-for-country"),
+                            dcc.Graph(id="icu_scatter"),
                         ]
                     ), width = 8, align='center'
                 ),
