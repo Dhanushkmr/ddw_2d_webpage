@@ -138,7 +138,7 @@ def hello():
 
 @server.route('/task_1/')
 def render_dashboard_1():
-    return flask.redirect('/task1')
+    return flask.redirect('/dash1')
 
 
 @server.route('/task_2/')
