@@ -31,7 +31,7 @@ world_map = go.Figure(
 world_map.update_layout(height=700, margin={"r":0,"t":0,"l":0,"b":0})
 
 markdown_text = '''
-    ###### By *Lim Pin, Dhanush Kumar, Lester Leong, Tan Shuyi, Yi Xiang*
+    ###### By *Lim Pin, Dhanush Kumar, Lester Leong, Tan Shu Yi, Yi Xiang*
 '''
 
 task_2_layout = html.Div(
@@ -45,7 +45,7 @@ task_2_layout = html.Div(
             dbc.Col(
                 dbc.Card(
                     [
-                        dbc.CardHeader("Covid-19 Weekly ICU Admissions by country"),
+                        dbc.CardHeader("Covid-19 Weekly ICU Admissions by country (click on a country for more info)"),
                         dcc.Graph(id="plotly-map", figure=world_map),
                     ]
                 ), width = 10, align='center'

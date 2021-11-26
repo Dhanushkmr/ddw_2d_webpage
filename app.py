@@ -144,13 +144,14 @@ def render_dashboard_1():
 def render_reports():
     return flask.redirect('/dash2')
 
-app = DispatcherMiddleware(server, {
+
+app = DispatcherMiddleware(server.wsgi_app, {
     # '/hello': dash_root.server,
     '/dash1': dash_app1.server,
     '/dash2': dash_app2.server
 })
 
-app.wsgi_app = PrefixMiddleware(app.wsgi_app, voc=True)
+app = PrefixMiddleware(app, voc=True)
 
 if __name__ == '__main__':  
     run_simple('localhost', 5000, app, use_reloader=True, use_debugger=True)

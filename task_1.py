@@ -35,7 +35,7 @@ df_conti = pd.read_csv("datasets/no-time-series.csv")
 world_map_1.update_layout(height=700, margin={"r":0,"t":0,"l":0,"b":0})
 
 markdown_text = '''
-    ###### By *Lim Pin, Dhanush Kumar, Lester Leong, Tan Shuyi, Yi Xiang*
+    ###### By *Lim Pin, Dhanush Kumar, Lester Leong, Tan Shu Yi, Yi Xiang*
 '''
 
 task_1_layout = html.Div(
