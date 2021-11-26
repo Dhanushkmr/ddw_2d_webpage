@@ -4,6 +4,7 @@ import flask
 from werkzeug.serving import run_simple
 from task_1 import *
 from task_2 import *
+from middleware import PrefixMiddlewares
 
 
 server = flask.Flask(__name__)
@@ -148,6 +149,8 @@ app = DispatcherMiddleware(server, {
     '/dash1': dash_app1.server,
     '/dash2': dash_app2.server
 })
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, voc=True)
 
 if __name__ == '__main__':  
     run_simple('localhost', 5000, app, use_reloader=True, use_debugger=True)
