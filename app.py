@@ -11,8 +11,8 @@ from middleware import PrefixMiddleware
 server = flask.Flask(__name__)
 
 # dash_root = Dash(__name__, server = server, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/hello_world/')
-dash_app1 = Dash(__name__, server = server, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/task_1/')
-dash_app2 = Dash(__name__, server = server, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/task_2/')
+dash_app1 = Dash(__name__, server = server, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/task_1/', serve_locally = False)
+dash_app2 = Dash(__name__, server = server, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/task_2/', serve_locally = False)
 
 # dash_root.layout = dash_root_layout
 dash_app1.layout = task_1_layout
