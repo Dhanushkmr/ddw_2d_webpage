@@ -149,4 +149,4 @@ app = DispatcherMiddleware(server, {
     '/dash2': dash_app2.server
 })
 
-run_simple('0.0.0.0', 8080, app, use_reloader=True, use_debugger=True)
+run_simple('localhost', 8080, app, use_reloader=True, use_debugger=True)
