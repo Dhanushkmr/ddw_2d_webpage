@@ -4,7 +4,7 @@ import flask
 from werkzeug.serving import run_simple
 from task_1 import *
 from task_2 import *
-from middleware import PrefixMiddlewares
+from middleware import PrefixMiddleware
 
 
 server = flask.Flask(__name__)
