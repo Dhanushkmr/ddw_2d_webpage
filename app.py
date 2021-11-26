@@ -1,6 +1,7 @@
 from dash import Dash, dcc, html
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 import flask
+from flask import render_template
 from werkzeug.serving import run_simple
 from task_1 import *
 from task_2 import *
@@ -133,7 +134,7 @@ def slider_manager(new_cases, hdi, hospital, stringency, continent):
 @server.route('/')
 @server.route('/hello_world/')
 def hello():
-    return '<h1><a href=/task_1/>Task 1</a></h1>\n<h1><a href=/task_2/>Task 2</a></h1>'
+    return render_template('index.html')
 
 @server.route('/task_1/')
 def render_dashboard_1():
