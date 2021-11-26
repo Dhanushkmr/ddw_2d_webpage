@@ -152,7 +152,7 @@ server.wsgi_app = DispatcherMiddleware(server.wsgi_app, {
     '/dash2': dash_app2.server
 })
 
-server.wsgi_app = PrefixMiddleware(server.wsgi_app, voc=False)
+server.wsgi_app = PrefixMiddleware(server.wsgi_app, voc=True)
 
 if __name__ == '__main__':  
     server.run('0.0.0.0', 8080, server, use_reloader=True, use_debugger=True)
